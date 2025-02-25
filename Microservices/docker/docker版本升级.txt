@@ -1,0 +1,13 @@
+1.找台有网的服务器，先把yum源配置成docker的：
+yum -y install --downloadonly --downloaddir=/data/docker docker-ce-19.03.12 docker-ce-cli-19.03.12 containerd.io
+
+
+
+1、手动安装repo-local-rpm里面的rpm
+2、复制docker-rpm到/mnt
+3、执行createrepo /mnt/update-docker/
+4、手动安装docker-rpm中的fuse-overlayfs、fuse3-libs、libcgroup（Kylin才需安装）、slirp4netns、docker-scan-plugin、docker-ce-rootless-extras
+5、复制update.repo到/etc/yum.repos.d
+6、执行yum clean all && yum makecache
+7、分别执行yum update docker-ce、yum update docker-ce-cli、yum update containerd
+8、启动docker验证业务是否正常
