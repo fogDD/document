@@ -1,0 +1,438 @@
+# Copyright 2017 The Kubernetes Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: kubernetes-dashboard
+
+# ---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+spec:
+  ports:
+    - port: 8443
+      targetPort: 8443
+      nodePort: 30443
+  type: NodePort
+  selector:
+    k8s-app: kubernetes-dashboard
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard-certs
+  namespace: kubernetes-dashboard
+data:
+  dashboard.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJBRENCcHFBREFnRUNBaEIyakYrVTdSYU9vdkx3QUFhSVBaTnVNQW9HQ0NxR1NNNDlCQU1DTUFBd0hoY04KTWpBeE1ERTVNVE0xTVRReldoY05NakV4TURFNU1UTTFNVFF6V2pBQU1Ga3dFd1lIS29aSXpqMENBUVlJS29aSQp6ajBEQVFjRFFnQUVWRi95U0FLVS9aWS9qWFhXM3M5UDhKaVdmMFZsK1dWR0dKQ1lVTktycU1jazRBWkc5dm1YCjJyR1JJM0dzcGZXUlNXWUc3OXdXYmR0MlBFQlBpZThWbGFNQ01BQXdDZ1lJS29aSXpqMEVBd0lEU1FBd1JnSWgKQU9QeUh0bm11emNFeUUwYm95SmxHdlYvWWVEUnp4SmI4WjYxQnl3dThBM2NBaUVBMjZEckNtR1FmWXpGeGNXVwp4L1IyeFM3MVNldmtaUklZR0pEWUV4QWg2SXM9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0=
+  dashboard.key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUtxNFo2TTc1aVQrTjdKdXVaODZTUkhRQllPZzJsTnpDMWNnMkVGYzFZQkFvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFVkYveVNBS1UvWlkvalhYVzNzOVA4SmlXZjBWbCtXVkdHSkNZVU5LcnFNY2s0QVpHOXZtWAoyckdSSTNHc3BmV1JTV1lHNzl3V2JkdDJQRUJQaWU4VmxRPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQ==
+  sk.pem: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpQcm9jLVR5cGU6IDQsRU5DUllQVEVECkRFSy1JbmZvOiBBRVMtMTI4LUNCQyw4RDkxRDNFOEVFMUU5N0RBMDJBNzdFM0QzRDY2MkQ0NAoKeENRZWlNNFVJVWhqS2t6VDA1WXFNMUYrNXQ4QzVza2QwVVkwM1pQOUlGY1I1UTVqekprUFpBNHN2K1pnd050cgoranZIWTZBaGF6VVZTa29FU1UyeU9rUm5Odlkyc1BPZ3VFWmJ2NTN2a3o0ZEhpWTJwS3JpcWhnWnlBSU5mL0NQCmpCQnNnV00rN08vNlJORzhQdzNoQnJ5WjJ5d284dnZpR055ZVZvYlpCclFmN0dSMGxmc1h2bmd0bmc2ZW5udWEKa05tbjk5NUxxR1poSHd0bmxEVkxHVFRlQmp6OVpNVVRBcVA4YW1XSnhUcGY2bXpLTzZlY01VWldXdXpId2xBQgplRFZ4NHNOaGQwVnBrVVBCWnZzN29kcXd6bElsOHJBdmhkdFczcm1aL2xBSFlNL1l4dm9kWHk2cTJ6K1F4VkwzCkl1OGRBa0V1ZERndi9FM3RSVXVBaWxBNXkzYlFuY0xnYWs2SmtJTlBRcTRQdjl5dnA5NTFQeW1WME9Nb2M4TDUKQWFlWGpjbVFiUUdQME92Nm5MRjU5VnZZZDYvcjRzN3oxT291a3dzczhMdHBYd0RaUFErWnhqdWtuSkdCakcxcQpwQW96QkM1bVZ3REFrb1RLNzcwaVJWOVRmbzBxejJlZEIvOStONCs3RDlpVDQ1YWNGTVRvZ2c3TnR4dVpSbnQvClc0VzJ5b3FXSG1ldHc2eHZxeGgwaE15YWNoTWgrWlJGb253QjhNQUdDU1Nob2t6a1QxTTlQZ3dlVno2NkQ3VUQKM2V4WE4xM0JQWHBJSStnSGlUcVpTVmZzRit3dXROUlNqeFVHbUxwSXJ0UzFuRmxOTE5sRzcrQzI2LzhBOTU1ZgpXRXc4QnlHdHVEaExTRWFQY3BlcWZOY2g2N0wxb1RzcE9uWWx3VkhjdkJBRGhqU1pSMjhpV0xQN2R3K210bjFJCkxaUWpPczNWRjI0S3AraDUvUnZRYlNiVExVd3I4TmY5WkFta2ZBS3F3a0JLSWtkSFdWSC8yMXhRVGxhUVUzSkgKVDh5RysrbmFoZ3R6UTIzRGkrWG52bFVkNk00N3JaTks0UFgxUWxXTEp5bFc0THgzRWMxVElsdllxU0FZMUVBVwp0b1FObnB5RThJYks5VGhkTmZMaVVmdzErYVBOSDl1OEsrc1FuU3E4T1FtNTBYdEt6YTU1cTlpNXBZaDFyckZQCmlYTVN1UlpXU0dabmNFc3A5RW9Fb2w3SUxGNjdVT3RiWVlQdUo3eTdjVTMzVFdlSG1EUnQ3aWhaSzF3SWs0bjYKUlhieFYzVnUzci90d0pWejFQUXNOSHI4bHE0Smg2V0ZHREV0RlQxUmszTWwvajVLYktxNloyY216c0VJNkFxeAp1QlE4RzVFR0IvbjB5a2QwcmZoVmxvY2FWOGx1djIrSXdjSGZsOFJkN2pQeUZ3QzBWODVITVlORXRGaFZ3bVNlCmY0YzhNSEZEa3lWTGwrVWllZU1SSDE2YTBWYldpZy9oa3h0SDVGVnNJVktrcVhPMFFJNm9tVUFXeHFvYURMRTEKekE1bEFoME9PNk9lK0NaY2VoUjRKUUJQNkoxRlJnbEhScFhib3BVTUpEN0tWYTVwVUNtQzVKdTVHa1B5TWZZQQpjTDE5ZXZSZnVnVHpyMU9wWk9DTGNhM1diSEdESk5ncmhnRkJJYTkzTXZFLzBhdXlYL2tyVm9INm1EN3l5K0RoCjYwa2VuazQyTXZ0QVJ2dHcxRnlVN0lzN1JPcWhnSTBFeE4vQTRsUVg2czU0UFdBQUVNRW1YRE1XaUZiVU5EWWwKNG9kK3lHeXV3cUhMMmNSdFdiamNHNVhQU0QzeUpNeU9BYTlwUjZMcnBRc1RJREFrZHRRbExLRm93cWI0ZnZJMgpNR2h3cWtaZzk5NmJnbFRsZU0yd080endMWlpQOTkvOW5oUEpuVHM4K1dwSklRQkRSSVNlSDFucm1yckFERFpLClpKbHZaUk9TMVVBaEphejhZUlFrZXhaSWlidERJSytyNEJlU1ArV0M5YWFQNFBacDRoUzVnL1FzZDZUWVRpMlgKUi9VVzdxM1MvTDcyOHRwaU9GdjFkV09SOWJJbTAycHgrZEY2Ukt4dmdqSEt4ZEsyTVdVQkcxQmlrYk56dmczYgotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
+# type: Opaque
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard-csrf
+  namespace: kubernetes-dashboard
+type: Opaque
+data:
+  csrf: ""
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard-key-holder
+  namespace: kubernetes-dashboard
+type: Opaque
+
+---
+
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard-mysql-config
+  namespace: kubernetes-dashboard
+data:
+  db_mysql.ini: |
+    ; debug or release
+    Debug = true
+    
+    [gorm]
+    DBType = mysql
+    User = pkc
+    Password = 6wb8eHgLjfHQ3XQ2s7SV
+    Host = dsb-das-mysql
+    Port = 3306
+    DBName = dashboard_data
+    Parameters = "charset=utf8&parseTime=True&loc=Local"
+    MaxLifetime = 0
+    MaxOpenConns = 0
+    MaxIdleConns = 0
+    EnableAutoMigrate = false
+    EnableImportData = false
+  ca.pem: |
+    -----BEGIN CERTIFICATE-----
+    MIICJTCCAcqgAwIBAgIUBI3hSy+JtYj3XQDkJw0quAIbpkgwCgYIKoZIzj0EAwIw
+    cDELMAkGA1UEBhMCQ04xEDAOBgNVBAgTB2JlaWppbmcxEDAOBgNVBAcTB2JlaWpp
+    bmcxETAPBgNVBAoTCElJRSwgQ0FTMRIwEAYDVQQLEwlwa2MgZ3JvdXAxFjAUBgNV
+    BAMTDXBrZy5paWUuYWMuY24wHhcNMTkxMTI5MDIwNjAwWhcNMjQxMTI3MDIwNjAw
+    WjBwMQswCQYDVQQGEwJDTjEQMA4GA1UECBMHYmVpamluZzEQMA4GA1UEBxMHYmVp
+    amluZzERMA8GA1UEChMISUlFLCBDQVMxEjAQBgNVBAsTCXBrYyBncm91cDEWMBQG
+    A1UEAxMNcGtnLmlpZS5hYy5jbjBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCyg
+    rj3iIiNRvK9Zfj9VNIZAkYYnIAnoUS/Ipcph3vmJo7Lj8g2fv+Jctr5A55Nf4NH0
+    IDeBfx6JA5Ahr584nAmjQjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTAD
+    AQH/MB0GA1UdDgQWBBSsni30hJS2ip/2hEEIf6bBdRc2PzAKBggqhkjOPQQDAgNJ
+    ADBGAiEAkQq4+EsnyVnw/72EZt/IbVOGwBqlJAQmg7kxdHoH9VYCIQCMPGhXhKZA
+    ij7fCHCC1+d/SW33/1PJ8nt2Xurzw9Ztig==
+    -----END CERTIFICATE-----
+  config.json: |
+    {
+      "signing": {
+        "default": {
+          "auth_remote": {
+            "remote": "ca_server",
+            "auth_key": "default"
+          }
+        }
+      },
+      "auth_keys": {
+        "default": {
+          "key": "EDCC0F516B5D39829C272FE051669842",
+          "type": "standard"
+        }
+      },
+      "remotes": {
+        "ca_server": "https://dsb-das-das.kubernetes-dashboard:31001"
+      }
+    }
+
+---
+
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard-settings
+  namespace: kubernetes-dashboard
+
+---
+
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+rules:
+  # Allow Dashboard to get, update and delete Dashboard exclusive secrets.
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["kubernetes-dashboard-key-holder", "kubernetes-dashboard-certs", "kubernetes-dashboard-csrf"]
+    verbs: ["get", "update", "delete"]
+    # Allow Dashboard to get and update 'kubernetes-dashboard-settings' config map.
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["kubernetes-dashboard-settings"]
+    verbs: ["get", "update"]
+    # Allow Dashboard to get metrics.
+  - apiGroups: [""]
+    resources: ["services"]
+    resourceNames: ["heapster", "dashboard-metrics-scraper"]
+    verbs: ["proxy"]
+  - apiGroups: [""]
+    resources: ["services/proxy"]
+    resourceNames: ["heapster", "http:heapster:", "https:heapster:", "dashboard-metrics-scraper", "http:dashboard-metrics-scraper"]
+    verbs: ["get"]
+
+---
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard
+rules:
+  # Allow Metrics Scraper to get metrics from the Metrics server
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["pods", "nodes"]
+    verbs: ["get", "list", "watch"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kubernetes-dashboard
+subjects:
+  - kind: ServiceAccount
+    name: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard-admin
+  namespace: kubernetes-dashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-dashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubernetes-dashboard
+subjects:
+  - kind: ServiceAccount
+    name: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+
+---
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      k8s-app: kubernetes-dashboard
+  template:
+    metadata:
+      labels:
+        k8s-app: kubernetes-dashboard
+    spec:
+      containers:
+        - name: kubernetes-dashboard
+          #image: 172.31.215.191:5000/dashboard:head
+          #image: 172.31.215.191:5000/dashboard:v2.02-xx
+          image: 172.31.215.191:5000/dashboard:v2.03-xx
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8443
+              protocol: TCP
+          args:
+            - --auto-generate-certificates
+            - --namespace=kubernetes-dashboard
+            - --db-config=/configs/db_mysql.ini
+            - --app-config=/configs/config.json
+            - --app-tls-remote-ca=/configs/ca.pem
+            # Uncomment the following line to manually specify Kubernetes API server Host
+            # If not specified, Dashboard will attempt to auto discover the API server and connect
+            # to it. Uncomment only if the default does not work.
+            # - --apiserver-host=http://my-address:port
+          env:
+            - name: DOCKER_REPO
+              value: "172.31.215.191:5000/"
+            - name: CHOCOCHAIN_TEMPLATE
+              value: "/tmp/charts"
+            - name: EXPLORER_URL
+              value: "http://39.96.139.64:30001"
+            - name: EXPLORER_BACKEND_URL
+              value: "http://dashboard-apiserver.kubernetes-dashboard:7071/api"
+            - name: MAIL_FROM
+              value: "bc_test@yeah.net"
+            - name: MAIL_FROM_PWD
+              value: "VEIALTUGDHDOHHLY"
+            - name: MAIL_SMTP
+              value: "smtp.yeah.net"
+            - name: MAIL_SMTP_PORT
+              value: "465"
+            - name: SK_PATH
+              value: /certs/sk.pem
+            - name: SK_PWD
+              value: pkcgroup2@21
+          volumeMounts:
+            - name: kubernetes-dashboard-certs
+              mountPath: /certs
+              # Create on-disk volume to store exec logs
+            - mountPath: /tmp
+              name: tmp-volume
+            - name: dashboard-config
+              mountPath: /configs
+          livenessProbe:
+            httpGet:
+              scheme: HTTPS
+              path: /
+              port: 8443
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 1001
+            runAsGroup: 2001
+      initContainers:
+      - name: extract-charts
+        image: ubuntu:latest
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh"]
+        args:
+        - "-c"
+        - "mkdir -p /tmp/charts; tar xf /charts.tar -C /tmp/charts"
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+        - name: chocochain-charts
+          mountPath: /charts.tar
+          subPath: charts.tar
+          readOnly: true
+      volumes:
+        - name: kubernetes-dashboard-certs
+          secret:
+            secretName: kubernetes-dashboard-certs
+        - name: tmp-volume
+          emptyDir: {}
+        - name: dashboard-config
+          configMap:
+            name: kubernetes-dashboard-mysql-config
+        - name: chocochain-charts 
+          configMap:
+            name: chocochain-charts
+      serviceAccountName: kubernetes-dashboard
+      nodeSelector:
+        "kubernetes.io/os": linux
+      # Comment the following tolerations if Dashboard must not be deployed on master
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    k8s-app: dashboard-metrics-scraper
+  name: dashboard-metrics-scraper
+  namespace: kubernetes-dashboard
+spec:
+  ports:
+    - port: 8000
+      targetPort: 8000
+  selector:
+    k8s-app: dashboard-metrics-scraper
+
+---
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    k8s-app: dashboard-metrics-scraper
+  name: dashboard-metrics-scraper
+  namespace: kubernetes-dashboard
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      k8s-app: dashboard-metrics-scraper
+  template:
+    metadata:
+      labels:
+        k8s-app: dashboard-metrics-scraper
+      annotations:
+        seccomp.security.alpha.kubernetes.io/pod: 'runtime/default'
+    spec:
+      containers:
+        - name: dashboard-metrics-scraper
+          image: kubernetesui/metrics-scraper:v1.0.4
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              scheme: HTTP
+              path: /
+              port: 8000
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+          volumeMounts:
+          - mountPath: /tmp
+            name: tmp-volume
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 1001
+            runAsGroup: 2001
+      serviceAccountName: kubernetes-dashboard
+      nodeSelector:
+        "kubernetes.io/os": linux
+      # Comment the following tolerations if Dashboard must not be deployed on master
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}

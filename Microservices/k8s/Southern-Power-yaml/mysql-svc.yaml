@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dsb-das-mysql
+  namespace: kubernetes-dashboard
+spec:
+  selector:
+    app.kubernetes.io/component: tidb
+  ports:
+    - protocol: TCP
+      port: 3306
+      # tidb 默认端口
+      targetPort: 4000
