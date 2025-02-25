@@ -1,0 +1,7 @@
+kubeadm token list		###查看token
+kubeadm token create	
+kubeadm token create --print-join-command	###重新生成新的token
+openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+	###获取ca证书sha256编码hash值
+
+kubeadm join --token aa78f6.8b4cafc8ed26c34f --discovery-token-ca-cert-hash sha256:0fd95a9bc67a7bf0ef42da968a0d55d92e52898ec37c971bd77ee501d845b538  172.16.6.79:6443 --skip-preflight-checks
