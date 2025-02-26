@@ -1,0 +1,1 @@
+# nginx+keepalived高可用(主备+双主模式)
