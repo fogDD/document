@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress #资源类型为Ingress
+metadata:
+  name: wolfcode-nginx-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules: # ingress配置规则，可以配置多个
+  - host: k8s.wolfcode.cn # 域名配置
+    http:
+      paths: # 相当于nginx的location配置，可以配置多个
+      - pathType: Prefix # 路径类型。按照路径类型进行匹配 ImplementationSpecific需要指定IngressClass，具体匹配规则以IngressClass中的规则为准。Exact：精准匹>,URL需要与path完全匹配上，且区分大小写。Prefix：以/作为分隔符来进行前缀匹配
+        backend:
+          service:
+            name: nginx-svc # 代理到哪个service
+            port:
+              number: 80 # service的端口
+        path: /api # 等同与nginx的lacation路径前缀匹配
