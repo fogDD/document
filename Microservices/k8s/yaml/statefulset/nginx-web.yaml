@@ -1,0 +1,36 @@
+---
+apiVersion: v1 # deployment api版本
+kind: Service # 资源类型为service
+metadata: # service 相关元数据，用于描述service的配置
+  name: nginx # service名称
+  labels: # 定义service的标签
+    app: nginx # 标签vaule的形式，名为app，值为nginx
+spec: # 期望service按照以下描述开始创建
+  ports:
+  - port: 80
+    name: web
+  clusterIP: None
+  selector:
+    app: nginx
+---
+apiVersion: apps/v1 # statefulset api版本
+kind: StatefulSet # 资源类型为statefulset
+metadata: # statefulset 相关元数据 ，用于描述metadata的配置
+  name: web # statefulset名称
+spec: # 期望statefulset 按照以下描述开始创建
+  serviceName: "nginx" # 使用哪个service 管理dns
+  replicas: 2
+  selector: # 选择器，用于找到匹配的RS
+    matchLabels: # 按照标签匹配
+      app: nginx #  匹配的标签，名为app，值为nginx
+  template: # pod的模版
+    metadata: # pod相关元数据，用于描述pod的配置
+      labels: # 定义pod的标签
+        app: nginx # 标签value形式，名为app值为nginx
+    spec: # 期望pod按照以下描述开始创建
+      containers: # pod的容器
+      - name: nginx # 容器名称 
+        image: nginx:1.26.1 # 容器的镜像
+        ports: # 容器内部要暴露的端口
+        - containerPort: 80 # 具体暴露的端口
+        name: web # 端口配置的名字
