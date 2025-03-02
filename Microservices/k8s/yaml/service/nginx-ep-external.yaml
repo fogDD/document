@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  labels:
+    app: nginx # 与service一致
+  name: nginx-svc-external # 与service 一致
+  namespace: default
+subsets:
+- addresses: 
+  - ip: 120.78.159.117 # 目标地址
+  ports: # 与service 一致
+  - name: web
+    port: 80
+    protocol: TCP
