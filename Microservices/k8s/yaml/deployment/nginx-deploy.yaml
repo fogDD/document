@@ -1,0 +1,36 @@
+apiVersion: apps/v1 # deployment api版本 
+kind: Deployment # 资源类型为deployment
+metadata: # 元数据信息
+  labels: # 标签
+    app: nginx-deploy # 标签具体的key:value配置形式
+  name: nginx-deploy # deploy名称
+  namespace: default # 所在的名称空间
+spec:
+  replicas: 1 # 期望的副本数量
+  revisionHistoryLimit: 10 # 进行滚动更新后，保留的历史副本数量
+  selector: # 选择器，用于找到匹配的RS
+    matchLabels: # 按照标签匹配
+      app: nginx-deploy # 匹配的标签的key:value
+  strategy: # 更新策略
+    rollingUpdate: # 滚动更新配置
+      maxSurge: 25% # 滚动更新时，更新的个数最多可以超过期望副本的个数/比例
+      maxUnavailable: 25% # 滚动更新时，表示所有的副本数最多可以有多少个不成功
+    type: RollingUpdate # 更新类型，采用滚动更新
+  template: # pod模版
+    metadata: # pod的元信息
+      labels: # pod 的标签
+        app: nginx-deploy # 标签具体的key:value
+    spec: # pod期望信息
+      containers: # pod的容器
+      - image: nginx # 容器使用的镜像
+        imagePullPolicy: IfNotPresent # 容器的拉取策略
+        name: nginx # 容器名称
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+      restartPolicy: Always # 重启策略
+      terminationGracePeriodSeconds: 30 # 删除操作最多宽限多少时间
