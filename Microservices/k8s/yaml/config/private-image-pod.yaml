@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: private-image-pull-pod
+spec:
+  imagePullSecrets: # 配置登录docker registry 的 secret
+  - name: harbor-sercret
+  containers:
+    - name: nginx
+      image: 192.168.1.101:8858/opensource/nginx:1.9.1
+      command: ["/bin/sh", "-c", "env;sleep 3600"]
+      imagePullPolicy: IfNotPresent
+      env:
+      - name: JAVA_VM_OPTS
+        valueFrom:
+          configMapKeyRef:
+            name: test-env-config # configMap的名字
+            key: JAVA_OPTS_TEST # 表示从 name 的 ConfigMap 中的获取名字为 key 的value，将其赋值给本地环境变量 JAVA_VM_OPTS
+      - name: APP
+        valueFrom:
+          configMapKeyRef:
+            name: test-env-config
+            key: APP_NAME
+      volumeMounts: # 加载数据卷
+      - name: db-config # 表示加载volumes 中的哪个数据卷
+        mountPath: "/usr/local/mysql/conf" # 想要将数据卷挂载在哪个目录下
+        readOnly: true
+  volumes: # 数据卷挂载configmap、secret
+    - name: db-config # 数据卷的名字。随意设置
+      configMap: # 数据卷的类型
+        name: test-dir-config # configMap的名字，必须跟想要加载的configMap相同
+        items: # 对 configMap 中的 key 进行映射，如果不指定，默认将 configMap 中的所有 key 全部转换一个个同名文件
+        - key: "db.properties" # configMap 中的 key 
+          path: "db.properties" # 将该 key 的值转换为文件
+  restartPolicy: Never
