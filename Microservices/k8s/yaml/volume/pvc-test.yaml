@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim # 资源类型为PVC
+metadata:
+  name: nfs-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 5Gi # 资源可以小于 PV ，但是不能大于，如果大于就会匹配不到 PV
+  storageClassName: slow

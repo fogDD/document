@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-client-provisioner
+  namespace: kube-system
+  labels:
+    app: nfs-client-provisioner
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate # 不进行滚动更新，更新直接删掉当前版本换成新版本
+  selector:
+    matchLabels:
+      app: nfs-client-provisioner
+  template:
+    metadata:
+      labels:
+        app: nfs-client-provisioner
+    spec:
+      serviceAccountName: nfs-client-provisioner # 赋予api-sever的权限 ，匹配pv需要
+      containers:
+        - name: nfs-client-provisioner
+        image: quay.io/external_storage/nfs-client-provisioner:latest
+        volumeMounts:
+          - name: nfs-client-root
+            mountPath: /persistentvolumes
+        env:
+          - name: PROVISIONER_NAME # 匹配的sc的名字
+            value: fuseim.pri/ifs
+          - name: NFS_SERVER
+            value: 192.168.1.101
+          - name: NFS_PATH
+            value: /data/nfs/rw
+     volumes:
+       - name: nfs-client-root
+           server: 192.168.1.101
+           path: /data/nfs/rw

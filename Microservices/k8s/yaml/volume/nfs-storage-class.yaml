@@ -1,0 +1,10 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: managed-nfs-storage
+  namespace: kube-system
+provisioner: fuseim.pri/ifs # 外部制备器提供者，编写为提供者的名称
+parameters:
+  archiveOnDelete: "false" # 是否存档，如果不，会删除oldpath下面的数据。如果true，重命名路径
+reclaimPolicy: Retain # 回收策略。默认为DELEte
+volumeBindingMode: Immediate # 默认为 Immediate，表示创建 PVC 立即进行绑定，只有 azuredisk 和 AWSelasticblockstore 支持其他值
