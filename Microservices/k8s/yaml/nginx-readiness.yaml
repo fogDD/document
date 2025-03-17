@@ -1,0 +1,56 @@
+apiVersion: v1 # api文档版本
+kind: Pod # 资源对象 也可以设置为Deplayment statefulset
+metadata: # Pod 相关元数据，用于描述pod的配置
+  name: nginx-readiness # pod名称
+  labels: # 定义pod的标签
+    type: app # 义label标签，名字为type，值为app
+    test: 1.0.0 # 定义label标签，名字为test，值为版本号
+  namespace: 'default' # 命令空间的配置
+spec: # 期望pod按照以下描述进行创建
+  containers: # 对于pod中的容器描述
+  - name: nginx # 容器的名称
+    image: nginx # 容器镜像版本
+    imagePullPolicy: IfNotPresent # 镜像拉取策略，制定如果本地有就用本地，没有就用网上的
+    startupProbe: # 检测应用是否启动的探针
+      #httpGet: # 探测方式 基于http请求
+      #  path: /index.html # http请求路径
+      #  port: 80 # 请求端口
+      #tcpSocket:
+        #port: 80
+      exec:
+        command:
+        - sh
+        - -c
+        - "sleep 3;echo success > /inited"
+      failureThreshold: 3 # 失败多少次算真正失败
+      periodSeconds: 10 # 间隔时间
+      successThreshold: 1 # 多少次检测成功算成功
+      timeoutSeconds: 5 # 请求的超时时间
+    readinessProbe: # 检测应用是否存活探针
+      httpGet: # 探测方式，用http请求探测
+        path: /started.html # 探测的路径
+        port: 80 # 探测的端口
+      failureThreshold: 3
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 3
+    command: # 指定容器启动时的命令
+    - nginx
+    - -g
+    - 'daemon off;' # nginx -g 'demon off;'
+    workingDir: /usr/share/nginx/html # 定义容器启动后的工作目录
+    ports:
+    - name: http # 端口名称
+      containerPort: 80 # 描述容器内要暴露的端口
+      protocol: TCP # 描述该端口基于哪种协议通信的
+    env: # 环境变量
+    - name: JVM_OPTS # 环境变量名称
+      value: '-Xms128m -Xms128m' # 环境变量的值
+    resources:
+      requests: # 最少需要多少资源
+        cpu: 100m # 限制cpu最少使用0.1个核心
+        memory: 128Mi # 限制内存最少使用128M
+      limits: # 最多使用多少资源
+        cpu: 200m # 最多使用0.2个核心
+        memory: 256Mi # 限制最多使用256M
+  restartPolicy: OnFailure # 重启策略，只有失败才会重启
